@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -38,6 +38,15 @@ function AppContent() {
 }
 
 export default function App() {
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      (document.documentElement.style as any).overscrollBehavior = 'none';
+      (document.body.style as any).overscrollBehavior = 'none';
+    }
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
