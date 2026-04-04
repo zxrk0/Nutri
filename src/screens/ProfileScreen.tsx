@@ -15,8 +15,8 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system/legacy';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import Svg, { Polyline, Circle, Line, Text as SvgText } from 'react-native-svg';
 import { Colors } from '../theme/colors';
 import {
@@ -177,7 +177,32 @@ export default function ProfileScreen() {
     }, [load])
   );
 
+  const uploadToSupabase = async (blob: Blob) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const path = `${user.id}/profile.jpg`;
+    const { error } = await supabase.storage
+      .from('avatars')
+      .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+    if (error) throw error;
+    const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+    await updateProfilePicture(data.publicUrl + '?t=' + Date.now());
+    await load();
+  };
+
   const pickProfilePicture = async () => {
+    if (Platform.OS === 'web') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        await uploadToSupabase(file);
+      };
+      input.click();
+      return;
+    }
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission refusée', "Active l'accès aux photos dans les réglages.");
@@ -191,10 +216,9 @@ export default function ProfileScreen() {
     });
     if (result.canceled) return;
     const uri = result.assets[0].uri;
-    const dest = FileSystem.documentDirectory + 'profile_picture.jpg';
-    await FileSystem.copyAsync({ from: uri, to: dest });
-    await updateProfilePicture(dest);
-    await load();
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    await uploadToSupabase(blob);
   };
 
   const openSettings = () => {
