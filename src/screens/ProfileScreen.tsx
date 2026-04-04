@@ -195,8 +195,11 @@ export default function ProfileScreen() {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
+      input.style.display = 'none';
+      document.body.appendChild(input);
       input.onchange = async (e: any) => {
         const file = e.target.files?.[0];
+        document.body.removeChild(input);
         if (!file) return;
         await uploadToSupabase(file);
       };
