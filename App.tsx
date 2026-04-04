@@ -1,20 +1,48 @@
+import React, { useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import TabNavigator from './src/navigation/TabNavigator';
+import LoginScreen from './src/screens/auth/LoginScreen';
+import RegisterScreen from './src/screens/auth/RegisterScreen';
+import { Colors } from './src/theme/colors';
 
-export default function App() {
+function AppContent() {
+  const { session, loading } = useAuth();
+  const [showRegister, setShowRegister] = useState(false);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color={Colors.green} />
+      </View>
+    );
+  }
+
+  if (!session) {
+    return showRegister ? (
+      <RegisterScreen onGoLogin={() => setShowRegister(false)} />
+    ) : (
+      <LoginScreen onGoRegister={() => setShowRegister(true)} />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <StatusBar style="light" />
+      <TabNavigator />
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </GestureHandlerRootView>
+  );
+}
