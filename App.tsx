@@ -40,10 +40,9 @@ function AppContent() {
 export default function App() {
   useEffect(() => {
     if (Platform.OS === 'web') {
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      (document.documentElement.style as any).overscrollBehavior = 'none';
-      (document.body.style as any).overscrollBehavior = 'none';
+      const style = document.createElement('style');
+      style.innerHTML = `* { overscroll-behavior: none !important; }`;
+      document.head.appendChild(style);
     }
   }, []);
 
