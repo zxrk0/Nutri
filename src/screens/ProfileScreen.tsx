@@ -179,12 +179,12 @@ export default function ProfileScreen() {
 
   const uploadToSupabase = async (blob: Blob) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) { Alert.alert('Erreur', 'Non connecté'); return; }
     const path = `${user.id}/profile.jpg`;
     const { error } = await supabase.storage
       .from('avatars')
       .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
-    if (error) throw error;
+    if (error) { Alert.alert('Erreur upload', error.message); return; }
     const { data } = supabase.storage.from('avatars').getPublicUrl(path);
     await updateProfilePicture(data.publicUrl + '?t=' + Date.now());
     await load();
