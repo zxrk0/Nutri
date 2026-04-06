@@ -11,6 +11,7 @@ import {
   Platform,
   Alert,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -147,11 +148,7 @@ function WeightChart({ entries }: { entries: WeightEntry[] }) {
 
 export default function ProfileScreen() {
   const { signOut } = useAuth();
-  const [settings, setSettings] = useState<UserSettings>({
-    calorie_goal: 2500,
-    protein_goal: 150,
-    username: 'Moi',
-  });
+  const [settings, setSettings] = useState<UserSettings | null>(null);
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [weightModalVisible, setWeightModalVisible] = useState(false);
@@ -288,6 +285,14 @@ export default function ProfileScreen() {
       },
     ]);
   };
+
+  if (!settings) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color={Colors.green} />
+      </View>
+    );
+  }
 
   const latestWeight =
     weightEntries.length > 0 ? weightEntries[weightEntries.length - 1].weight : null;
