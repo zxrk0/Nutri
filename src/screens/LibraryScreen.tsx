@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,7 +25,7 @@ import {
 } from '../db/database';
 
 export default function LibraryScreen() {
-  const [meals, setMeals] = useState<MealLibraryItem[]>([]);
+  const [meals, setMeals] = useState<MealLibraryItem[] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingMeal, setEditingMeal] = useState<MealLibraryItem | null>(null);
 
@@ -89,6 +90,14 @@ export default function LibraryScreen() {
 
   const isValid = name.trim() && calories && protein &&
     !isNaN(parseFloat(calories)) && !isNaN(parseFloat(protein));
+
+  if (meals === null) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color={Colors.green} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

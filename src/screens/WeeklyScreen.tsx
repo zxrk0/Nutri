@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -47,11 +48,7 @@ function computeStreak(entries: DailySummary[], settings: UserSettings): number 
 
 export default function WeeklyScreen() {
   const [history, setHistory] = useState<DailySummary[]>([]);
-  const [settings, setSettings] = useState<UserSettings>({
-    calorie_goal: 2500,
-    protein_goal: 150,
-    username: 'Moi',
-  });
+  const [settings, setSettings] = useState<UserSettings | null>(null);
 
   const load = useCallback(async () => {
     const [entries, s] = await Promise.all([getHistory(), getUserSettings()]);
@@ -64,6 +61,14 @@ export default function WeeklyScreen() {
       load();
     }, [load])
   );
+
+  if (!settings) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color={Colors.green} />
+      </View>
+    );
+  }
 
   const streak = computeStreak(history, settings);
 
