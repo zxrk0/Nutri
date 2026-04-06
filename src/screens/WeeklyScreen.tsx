@@ -30,9 +30,12 @@ function formatDate(dateStr: string): { day: string; date: string } {
 function computeStreak(entries: DailySummary[], settings: UserSettings): number {
   let streak = 0;
   for (const entry of entries) {
+    const cals = Number(entry.total_calories);
+    const calGoal = Number(settings.calorie_goal);
     const isGreen =
-      entry.total_protein >= settings.protein_goal &&
-      entry.total_calories <= settings.calorie_goal;
+      Number(entry.total_protein) >= Number(settings.protein_goal) &&
+      cals >= calGoal * 0.9 &&
+      cals <= calGoal * 1.1;
     if (isGreen) {
       streak++;
     } else {
@@ -87,8 +90,8 @@ export default function WeeklyScreen() {
         ) : (
           history.map((entry) => {
             const isGreen =
-              entry.total_protein >= settings.protein_goal &&
-              entry.total_calories <= settings.calorie_goal;
+              Number(entry.total_protein) >= Number(settings.protein_goal) &&
+              Number(entry.total_calories) >= Number(settings.calorie_goal);
             const { day, date } = formatDate(entry.date);
             const calPct = Math.min((entry.total_calories / settings.calorie_goal) * 100, 100);
             const protPct = Math.min((entry.total_protein / settings.protein_goal) * 100, 100);
