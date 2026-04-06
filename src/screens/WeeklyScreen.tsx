@@ -116,12 +116,12 @@ export default function WeeklyScreen() {
                 {/* Macros */}
                 <View style={styles.macroRow}>
                   <View style={styles.macroItem}>
-                    <Text style={styles.macroValue}>{Math.round(entry.total_calories)}</Text>
+                    <Text style={[styles.macroValue, { color: Colors.orange }]}>{Math.round(entry.total_calories)}</Text>
                     <Text style={styles.macroLabel}>/ {settings.calorie_goal} kcal</Text>
                   </View>
                   <View style={styles.macroDivider} />
                   <View style={styles.macroItem}>
-                    <Text style={styles.macroValue}>{entry.total_protein.toFixed(1)}g</Text>
+                    <Text style={[styles.macroValue, { color: Colors.blue }]}>{entry.total_protein.toFixed(1)}g</Text>
                     <Text style={styles.macroLabel}>/ {settings.protein_goal}g prot</Text>
                   </View>
                 </View>
