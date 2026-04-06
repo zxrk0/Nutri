@@ -125,8 +125,8 @@ export default function LibraryScreen() {
               <View>
                 <Text style={styles.mealName}>{item.name}</Text>
                 <View style={styles.macrosRow}>
-                  <View style={[styles.macroBadge, { backgroundColor: Colors.greenDim }]}>
-                    <Text style={[styles.macroBadgeText, { color: Colors.green }]}>
+                  <View style={[styles.macroBadge, { backgroundColor: Colors.orangeDim }]}>
+                    <Text style={[styles.macroBadgeText, { color: Colors.orange }]}>
                       {item.calories} kcal
                     </Text>
                   </View>
