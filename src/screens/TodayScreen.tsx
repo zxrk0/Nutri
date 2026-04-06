@@ -146,7 +146,7 @@ const handleDelete = (entry: DailyEntry) => {
               size={130}
               strokeWidth={10}
               progress={calProgress}
-              color={Colors.green}
+              color={Colors.orange}
               label="Calories"
               current={totalCals}
               goal={settings.calorie_goal}

@@ -95,8 +95,8 @@ export default function WeeklyScreen() {
             const { day, date } = formatDate(entry.date);
             const calPct = Math.min((entry.total_calories / settings.calorie_goal) * 100, 100);
             const protPct = Math.min((entry.total_protein / settings.protein_goal) * 100, 100);
-            const calColor = entry.total_calories > settings.calorie_goal ? Colors.red : Colors.green;
-            const protColor = entry.total_protein >= settings.protein_goal ? Colors.green : Colors.red;
+            const calColor = Colors.orange;
+            const protColor = Colors.blue;
 
             return (
               <View key={entry.date} style={[styles.dayCard, isGreen ? styles.dayCardGreen : styles.dayCardRed]}>
