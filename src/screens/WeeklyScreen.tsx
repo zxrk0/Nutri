@@ -198,15 +198,15 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 16,
     marginBottom: 12,
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   dayCardGreen: {
     backgroundColor: Colors.card,
-    borderColor: Colors.green + '30',
+    borderColor: Colors.green + '60',
   },
   dayCardRed: {
     backgroundColor: Colors.card,
-    borderColor: Colors.red + '30',
+    borderColor: Colors.red + '60',
   },
   cardHeader: {
     flexDirection: 'row',
