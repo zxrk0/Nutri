@@ -79,22 +79,14 @@ export default function TodayScreen() {
   };
 
   const handleDelete = async (entry: DailyEntry) => {
-    if (Platform.OS === 'web') {
-      if (!window.confirm(`Retirer "${entry.meal_name}" ?`)) return;
-      await deleteDailyEntry(entry.id);
-      await load();
-    } else {
+    if (Platform.OS !== 'web') {
       Alert.alert('Supprimer', `Retirer "${entry.meal_name}" ?`, [
         { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Supprimer',
-          style: 'destructive',
-          onPress: async () => {
-            await deleteDailyEntry(entry.id);
-            await load();
-          },
-        },
+        { text: 'Supprimer', style: 'destructive', onPress: async () => { await deleteDailyEntry(entry.id); await load(); } },
       ]);
+    } else {
+      await deleteDailyEntry(entry.id);
+      await load();
     }
   };
 

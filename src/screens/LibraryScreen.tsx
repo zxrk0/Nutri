@@ -74,18 +74,16 @@ export default function LibraryScreen() {
     await load();
   };
 
-  const handleDelete = (meal: MealLibraryItem) => {
-    Alert.alert('Supprimer', `Supprimer "${meal.name}" de la bibliothèque ?`, [
-      { text: 'Annuler', style: 'cancel' },
-      {
-        text: 'Supprimer',
-        style: 'destructive',
-        onPress: async () => {
-          await deleteMealFromLibrary(meal.id);
-          await load();
-        },
-      },
-    ]);
+  const handleDelete = async (meal: MealLibraryItem) => {
+    if (Platform.OS !== 'web') {
+      Alert.alert('Supprimer', `Supprimer "${meal.name}" de la bibliothèque ?`, [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Supprimer', style: 'destructive', onPress: async () => { await deleteMealFromLibrary(meal.id); await load(); } },
+      ]);
+    } else {
+      await deleteMealFromLibrary(meal.id);
+      await load();
+    }
   };
 
   const isValid = name.trim() && calories && protein &&
