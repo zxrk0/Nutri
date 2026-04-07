@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
 import ProgressRing from '../components/ProgressRing';
 import AddMealModal from '../components/AddMealModal';
+import ConfirmModal from '../components/ConfirmModal';
 import {
   todayString,
   getDailyEntries,
@@ -35,6 +36,7 @@ export default function TodayScreen() {
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [entryToDelete, setEntryToDelete] = useState<DailyEntry | null>(null);
 
   const load = useCallback(async () => {
     const today = todayString();
@@ -78,16 +80,13 @@ export default function TodayScreen() {
     await load();
   };
 
-  const handleDelete = async (entry: DailyEntry) => {
-    if (Platform.OS !== 'web') {
-      Alert.alert('Supprimer', `Retirer "${entry.meal_name}" ?`, [
-        { text: 'Annuler', style: 'cancel' },
-        { text: 'Supprimer', style: 'destructive', onPress: async () => { await deleteDailyEntry(entry.id); await load(); } },
-      ]);
-    } else {
-      await deleteDailyEntry(entry.id);
-      await load();
-    }
+  const handleDelete = (entry: DailyEntry) => setEntryToDelete(entry);
+
+  const confirmDelete = async () => {
+    if (!entryToDelete) return;
+    await deleteDailyEntry(entryToDelete.id);
+    setEntryToDelete(null);
+    await load();
   };
 
   const today = new Date();
@@ -245,6 +244,12 @@ export default function TodayScreen() {
         onClose={() => setModalVisible(false)}
         onAddFromLibrary={handleAddFromLibrary}
         onAddManual={handleAddManual}
+      />
+      <ConfirmModal
+        visible={!!entryToDelete}
+        message={`Retirer "${entryToDelete?.meal_name}" ?`}
+        onConfirm={confirmDelete}
+        onCancel={() => setEntryToDelete(null)}
       />
     </View>
   );

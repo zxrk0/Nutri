@@ -5,7 +5,6 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Alert,
   Modal,
   TextInput,
   KeyboardAvoidingView,
@@ -16,6 +15,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
+import ConfirmModal from '../components/ConfirmModal';
 import {
   getMealsLibrary,
   addMealToLibrary,
@@ -28,6 +28,7 @@ export default function LibraryScreen() {
   const [meals, setMeals] = useState<MealLibraryItem[] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingMeal, setEditingMeal] = useState<MealLibraryItem | null>(null);
+  const [mealToDelete, setMealToDelete] = useState<MealLibraryItem | null>(null);
 
   const [name, setName] = useState('');
   const [calories, setCalories] = useState('');
@@ -74,16 +75,13 @@ export default function LibraryScreen() {
     await load();
   };
 
-  const handleDelete = async (meal: MealLibraryItem) => {
-    if (Platform.OS !== 'web') {
-      Alert.alert('Supprimer', `Supprimer "${meal.name}" de la bibliothèque ?`, [
-        { text: 'Annuler', style: 'cancel' },
-        { text: 'Supprimer', style: 'destructive', onPress: async () => { await deleteMealFromLibrary(meal.id); await load(); } },
-      ]);
-    } else {
-      await deleteMealFromLibrary(meal.id);
-      await load();
-    }
+  const handleDelete = (meal: MealLibraryItem) => setMealToDelete(meal);
+
+  const confirmDelete = async () => {
+    if (!mealToDelete) return;
+    await deleteMealFromLibrary(mealToDelete.id);
+    setMealToDelete(null);
+    await load();
   };
 
   const isValid = name.trim() && calories && protein &&
@@ -218,6 +216,12 @@ export default function LibraryScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </Modal>
+      <ConfirmModal
+        visible={!!mealToDelete}
+        message={`Supprimer "${mealToDelete?.name}" de la bibliothèque ?`}
+        onConfirm={confirmDelete}
+        onCancel={() => setMealToDelete(null)}
+      />
     </View>
   );
 }
