@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Image,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -77,18 +78,24 @@ export default function TodayScreen() {
     await load();
   };
 
-const handleDelete = (entry: DailyEntry) => {
-    Alert.alert('Supprimer', `Retirer "${entry.meal_name}" ?`, [
-      { text: 'Annuler', style: 'cancel' },
-      {
-        text: 'Supprimer',
-        style: 'destructive',
-        onPress: async () => {
-          await deleteDailyEntry(entry.id);
-          await load();
+  const handleDelete = async (entry: DailyEntry) => {
+    if (Platform.OS === 'web') {
+      if (!window.confirm(`Retirer "${entry.meal_name}" ?`)) return;
+      await deleteDailyEntry(entry.id);
+      await load();
+    } else {
+      Alert.alert('Supprimer', `Retirer "${entry.meal_name}" ?`, [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Supprimer',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteDailyEntry(entry.id);
+            await load();
+          },
         },
-      },
-    ]);
+      ]);
+    }
   };
 
   const today = new Date();
